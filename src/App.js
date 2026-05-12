@@ -972,7 +972,7 @@ function LoadingScreen({ onComplete }) {
       clearInterval(progressInterval);
       clearInterval(messageInterval);
     };
-  }, [onComplete]);
+  }, [onComplete , statusMessages]);
 
   return (
     <div style={styles.loadingContainer}>
@@ -1089,7 +1089,7 @@ function ResultsScreen({ formData, savedResults, onSaveResults, onRestart }) {
     if (!savedResults && (results.bright || results.dark || results.love || results.friendshipRates.length > 0)) {
       onSaveResults(results);
     }
-  }, []);
+  }, [onSaveResults, results, savedResults]);
 
   // Extract for easier use
   const friendshipRates = results.friendshipRates || [];
