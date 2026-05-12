@@ -972,6 +972,7 @@ function LoadingScreen({ onComplete }) {
       clearInterval(progressInterval);
       clearInterval(messageInterval);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onComplete]);
 
   return (
@@ -1083,6 +1084,7 @@ const results = useMemo(() => savedResults || {
       description: getRandomPrediction(friendshipDescriptions)
     })) || [],
   loveLifeRate: formData.predictionTypes?.includes('love') ? getRandomNumber(0, 100) : null
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [savedResults]); // only re-compute when savedResults changes
 
   // Save results if not already saved
@@ -1090,6 +1092,7 @@ const results = useMemo(() => savedResults || {
     if (!savedResults && (results.bright || results.dark || results.love || results.friendshipRates.length > 0)) {
       onSaveResults(results);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Extract for easier use
