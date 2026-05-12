@@ -1,7 +1,7 @@
 // after datasotr fixes 
 
-
-import React, { useState, useEffect } from 'react';
+// Add useMemo to your import at the top of the file:
+import React, { useState, useEffect, useMemo } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -972,7 +972,7 @@ function LoadingScreen({ onComplete }) {
       clearInterval(progressInterval);
       clearInterval(messageInterval);
     };
-  }, [onComplete , statusMessages]);
+  }, [onComplete]);
 
   return (
     <div style={styles.loadingContainer}>
@@ -1070,26 +1070,27 @@ function ResultsScreen({ formData, savedResults, onSaveResults, onRestart }) {
   };
 
   // Check if results already exist (from savedResults), otherwise generate new ones
-  const results = savedResults || {
-    bright: formData.predictionTypes?.includes('bright') ? getRandomPrediction(brightPredictions) : null,
-    dark: formData.predictionTypes?.includes('dark') ? getRandomPrediction(darkPredictions) : null,
-    love: formData.predictionTypes?.includes('love') ? getRandomPrediction(lovePredictions) : null,
-    friendshipRates: formData.friendNames
-      ?.filter(name => name.trim() !== '')
-      .map(name => ({
-        name,
-        rate: getRandomNumber(0, 100),
-        description: getRandomPrediction(friendshipDescriptions)
-      })) || [],
-    loveLifeRate: formData.predictionTypes?.includes('love') ? getRandomNumber(0, 100) : null
-  };
+  // AFTER:
+const results = useMemo(() => savedResults || {
+  bright: formData.predictionTypes?.includes('bright') ? getRandomPrediction(brightPredictions) : null,
+  dark: formData.predictionTypes?.includes('dark') ? getRandomPrediction(darkPredictions) : null,
+  love: formData.predictionTypes?.includes('love') ? getRandomPrediction(lovePredictions) : null,
+  friendshipRates: formData.friendNames
+    ?.filter(name => name.trim() !== '')
+    .map(name => ({
+      name,
+      rate: getRandomNumber(0, 100),
+      description: getRandomPrediction(friendshipDescriptions)
+    })) || [],
+  loveLifeRate: formData.predictionTypes?.includes('love') ? getRandomNumber(0, 100) : null
+}, [savedResults]); // only re-compute when savedResults changes
 
   // Save results if not already saved
   useEffect(() => {
     if (!savedResults && (results.bright || results.dark || results.love || results.friendshipRates.length > 0)) {
       onSaveResults(results);
     }
-  }, [onSaveResults, results, savedResults]);
+  }, []);
 
   // Extract for easier use
   const friendshipRates = results.friendshipRates || [];
